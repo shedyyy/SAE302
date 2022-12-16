@@ -1,8 +1,6 @@
 # SAE302
-Contexte
 A l’image du protocole SNMP, nous souhaitons réaliser un système client-serveur permettant d’envoyer des commandes systèmes permettant de superviser et de diagnostiquer des machines ou serveurs à distance.
 
-Fonctionnalités
 Nous souhaitons une interface graphique permettant de réaliser l’ensemble des fonctionnalités suivantes. Sur la base d’un système client-serveur, vous devrez pouvoir interroger des serveurs sur leur état et leur fonctionnement et même détecter lorsqu’ils sont déconnectés du réseau.
 
 Nous souhaitons avoir une liste d’IP ou de noms de machines, sous la forme de fichier, interroger ces mêmes machines sur leur état. L’interface graphique permettra d’effectuer les commandes suivantes :
@@ -37,12 +35,10 @@ Quelle que soit la commande utilisée, l’interface devra afficher le résultat
 
 Nous n’avons pas spécifiquement de prérequis sur l’interface mais elle se doit d’être ergonomique et facile d’utilisation tant pour un administrateur système que pour un débutant averti sur l’administration système.
 
-Points d’attention
 Vous devrez bien sûr gérer l’ensemble des erreurs possibles et éviter tous les crashs de votre application.
 
 Deux documentations de qualité en anglais (markdown ou en pdf) devront être rédigés pour l’utilisateur de l’interface et sur un document du développement effectué afin de pouvoir ajouter de nouvelles fonctionnalités (ou commandes) si nécessaire.
 
-Options supplémentaires (à réfléchir en fonction du temps)
 Un graphique sur l’utilisation de la CPU ou la mémoire.
 
 Nous nous posons également la question sur une connexion sécurisée et chiffrée entre le client et le serveur, il serait intéressant de voir si sur le réseau les commandes peuvent apparaître à l’aide d’un outil tel que Wireshark. Si les commandes ne sont pas sécurisées, il serait donc intéressant de les sécuriser.
