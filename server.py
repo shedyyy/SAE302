@@ -31,7 +31,7 @@ def Server():
                         print ("Command used: ", data)
                         cmd = data.split(':')
                         cmdping = data.split(' ')
-                        if cmd[0].lower() == "dos" and sys.platform == 'win32':
+                        if cmd[0] == "dos" and sys.platform == 'win32':
                             try:
                                 reply = subprocess.check_output(cmd[1], shell=True).decode('cp850').strip()
                             except:
@@ -42,7 +42,7 @@ def Server():
                                     conn.send(reply.encode())
                                 else:
                                     conn.send(reply.encode())
-                        elif cmd[0].lower() == "powershell" and sys.platform == 'win32':
+                        elif cmd[0] == "powershell" and sys.platform == 'win32':
                             try:
                                 reply = subprocess.check_output(f"powershell.exe {cmd[1]}", shell=True).decode('cp850').strip()
                             except:
@@ -51,39 +51,39 @@ def Server():
                             else:
                                 conn.send(reply.encode())
 
-                        elif data.lower() == "python --version":
+                        elif data == "python --version":
                              rep = str(subprocess.check_output('python --version', shell=True))
                              output = rep.replace('b', '').replace('\\r', "").replace('\\n', "")
                              conn.send(output.encode())
                              print("Succesfully sent the current Python version installed in the machine to the client")
 
-                        elif cmdping[0].lower() == "ping" and len(cmdping[1]) !=0:
+                        elif cmdping[0] == "ping" and len(cmdping[1]) !=0:
                              rep = subprocess.getoutput(data)
                              conn.send(rep.encode())
                              print(f"Succesfully pinged the IP")
 
-                        elif data.lower() == "os":
+                        elif data == "os":
                              rep = platform.platform()
                              conn.send(rep.encode())
                              print("Succesfully sent the machine's OS information to the client")
 
-                        elif data.lower() == "name":
+                        elif data == "name":
                              rep = socket.gethostname()
                              conn.send(rep.encode())
                              print("Succesfully sent the machine's hostname to the client")
 
-                        elif data.lower() == "ip":
+                        elif data == "ip":
                              hostname = socket.gethostname()
                              rep = str(f"{socket.gethostbyname(hostname)}")
                              conn.send(rep.encode())
                              print("Succesfully sent the machine's IP to the client")
 
-                        elif data.lower() == "cpu":
+                        elif data == "cpu":
                              rep = str(f'{psutil.cpu_percent()}% of the CPU used.')
                              conn.send(rep.encode())
                              print("Succesfully sent the machine's CPU information to the client")
 
-                        elif data.lower() == "ram":
+                        elif data == "ram":
                              rep = str(f'RAM used: {psutil.virtual_memory().percent}% \nTotal memory: {psutil.virtual_memory().total / 1024 / 1024 / 1024:.2f} GB \nMemory left: {psutil.virtual_memory().available / 1024 / 1024 / 1024:.2f} GB')
                              conn.send(rep.encode())
                              print("Succesfully sent the machine's RAM information to the client")
