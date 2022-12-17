@@ -168,8 +168,8 @@ class MainWindow(QMainWindow):
             self.__iptext.hide()
 
     def addip(self):
-        if self.__newiptext.iptext() != "":
-            testfile = self.__filetext.iptext()
+        if self.__newiptext.text() != "":
+            testfile = self.__filetext.text()
             file = open(f"{testfile}", "a")
             file.write(f"\n{self.__newiptext.text()}")
             self.__iptext.addItem(self.__newiptext.text())
