@@ -11,10 +11,6 @@ class Client():
         self.__sock = socket.socket()
         self.__thread = None
 
-    
-    def connection(self):
-            self.__sock.connect((self.__host, self.__port))
-
     def connect(self):
         try :
             self.__sock.connect((self.__host,self.__port))
@@ -28,13 +24,13 @@ class Client():
             print ("Connection succesful")
             return 0
 
+    def connection(self):
+            self.__sock.connect((self.__host, self.__port))
+
     def communication(self, msg):
         self.__sock.send(msg.encode())
         reponse = self.__sock.recv(32000).decode()
         return reponse
-
-
-
 
 
 class MainWindow(QMainWindow):
@@ -42,11 +38,12 @@ class MainWindow(QMainWindow):
         super().__init__()
         widget = QWidget()
         self.setCentralWidget(widget)
+        self.setWindowTitle("SAE3.02")
         grid = QGridLayout()
         widget.setLayout(grid)
         self.__host = QLabel("Host")
         self.__port = QLabel("Port")
-        self.__newip = QLabel("New IP:")
+        self.__newip = QLabel("Add a new IP to the list:")
         self.__addip = QPushButton("Add")
         self.__entercommand = QLabel("Command: ")
         self.__response = QLabel("Server response: ")
@@ -57,53 +54,46 @@ class MainWindow(QMainWindow):
         self.__commandstext = QLineEdit("")
         self.__filetext = QLineEdit("")
         self.__savefile = QLineEdit("")
-        self.__newiptext.hide()
-        self.__newip.hide()
-        self.__addip.hide()
-        self.__savefile.hide()
         self.__addip.setEnabled(False)
-        self.__w = None
-
-
-        self.__client = None
         self.__connectbutton = QPushButton("Connect")
         self.__send = QPushButton("Send")
         self.__filename = QPushButton("Choose")
-
-
         self.__filetext.setReadOnly(True)
         self.__entertext.hide()
         self.__entercommand.hide()
         self.__commandstext.hide()
-        self.__labnomfichier = QLabel("Source file:")
-        grid.addWidget(self.__newip, 9, 0)
-        grid.addWidget(self.__addip, 9, 2)
-        grid.addWidget(self.__entertext, 3, 0, 1, 5)
-        grid.addWidget(self.__host, 2, 0)
+        self.__filenames = QLabel("Source file:")
+        self.__newiptext.hide()
+        self.__newip.hide()
+        self.__addip.hide()
+        self.__savefile.hide()
+        
+        grid.addWidget(self.__host, 1, 0)
+        grid.addWidget(self.__iptext, 1, 1)
         grid.addWidget(self.__port, 3, 0)
+        grid.addWidget(self.__porttext, 3, 1)
+        self.__porttext.setPlaceholderText("Enter the port used on the server file")
+        grid.addWidget(self.__connectbutton, 2, 2)
+        grid.addWidget(self.__filenames, 4, 1)
+        grid.addWidget(self.__filetext, 5, 1)
+        grid.addWidget(self.__filename, 5, 2)
+        grid.addWidget(self.__newip, 6, 1)
+        grid.addWidget(self.__newiptext, 7, 1)
+        grid.addWidget(self.__addip, 7, 2)
+        grid.addWidget(self.__entertext, 3, 0, 1, 5)
         grid.addWidget(self.__entercommand, 2, 0)
         grid.addWidget(self.__response, 3, 0)
-        grid.addWidget(self.__iptext, 2, 1)
-        grid.addWidget(self.__porttext, 3, 1)
-        grid.addWidget(self.__newiptext, 9, 1)
         self.__commandstext.setPlaceholderText("Enter your command here!")
         grid.addWidget(self.__commandstext, 2, 1, 1, 3)
-        self.__porttext.setPlaceholderText("Enter the port used on the server file")
         self.__commandstext.setText("")
         self.__newiptext.setPlaceholderText("Enter a new IP here")
         self.__entertext.setReadOnly(True)
-        grid.addWidget(self.__connectbutton, 4, 1)
         grid.addWidget(self.__send, 2, 4)
-        grid.addWidget(self.__labnomfichier, 8, 0)
-        grid.addWidget(self.__filetext, 8, 1)
-        grid.addWidget(self.__filename, 8, 2)
         grid.addWidget(self.__savefile, 10, 2)
 
-
-
-        self.__connectbutton.clicked.connect(self.connectbuttonnexion)
-        self.__send.clicked.connect(self.command1)
-        self.__addip.clicked.connect(self.ajout)
+        self.__connectbutton.clicked.connect(self.connectbutton)
+        self.__send.clicked.connect(self.command)
+        self.__addip.clicked.connect(self.addip)
         self.__filename.clicked.connect(self.filename)
         self.__send.hide()
         self.__response.hide()
@@ -111,31 +101,24 @@ class MainWindow(QMainWindow):
 
 
 
-        self.setWindowTitle("SAE3.02")
-
-
-    def command1(self):
+    def command(self):
         msg = self.__commandstext.text()
         try:
             reponse = self.__client.communication(msg)
         except:
-            self.__entertext.append(f"The server is off or you aren't connected anymore! Please verify your settings\n")
+            self.__entertext.append(f"The server is off or you aren't connected anymore! Please verify your settings")
         else:
             self.__entertext.append(f"{reponse}\n")
             self.__commandstext.clear()
-
-
-
-
 
     def filename(self):
         try:
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
             fileName, _ = QFileDialog.getOpenFileName(self, "Choose your file", "", "Text files (*.txt)", options=options)
-            testest = pathlib.Path(fileName).name
+            testfile = pathlib.Path(fileName).name
             self.__filetext.setText(fileName)
-            file1 = open(f"{testest}", 'r')
+            file1 = open(f"{testfile}", 'r')
             Lines = file1.readlines()
             count = 0
             for line in Lines:
@@ -153,12 +136,7 @@ class MainWindow(QMainWindow):
             msg.setIcon(QMessageBox.Critical)
             x = msg.exec_()
 
-
-
-
-
-
-    def connectbuttonnexion(self):
+    def connectbutton(self):
         try:
             host = str(self.__iptext.currentText())
             port = int(self.__porttext.text())
@@ -177,21 +155,22 @@ class MainWindow(QMainWindow):
             self.__entercommand.show()
             self.__commandstext.show()
             self.__porttext.hide()
-            self.__host.hide()
-            self.__addip.hide()
+            self.__filetext.hide()
+            self.__filenames.hide()
+            self.__filename.hide()
             self.__newip.hide()
             self.__port.hide()
             self.__porttext.hide()
             self.__newiptext.hide()
+            self.__host.hide()
+            self.__addip.hide()
             self.__connectbutton.hide()
-            self.__filetext.hide()
-            self.__labnomfichier.hide()
-            self.__filename.hide()
+            self.__iptext.hide()
 
-    def ajout(self):
+    def addip(self):
         if self.__newiptext.iptext() != "":
-            testest = self.__filetext.iptext()
-            file = open(f"{testest}", "a")
+            testfile = self.__filetext.iptext()
+            file = open(f"{testfile}", "a")
             file.write(f"\n{self.__newiptext.text()}")
             self.__iptext.addItem(self.__newiptext.text())
             self.__newiptext.setText("")
@@ -203,8 +182,21 @@ class MainWindow(QMainWindow):
             msg.setIcon(QMessageBox.Critical)
             x = msg.exec_()
 
-    def _actionQuitter(self):
-        QCoreApplication.exit(0)
+    def closeEvent(self, _e: QCloseEvent):
+        box = QMessageBox()
+        box.setWindowTitle("Why so quickly?")
+        box.setText("Are you sure you don't want to try some more commands?")
+        box.addButton(QMessageBox.Yes)
+        box.addButton(QMessageBox.No)
+
+        ret = box.exec()
+
+        if ret == QMessageBox.Yes:
+            QCoreApplication.exit(0)
+        else:
+            _e.ignore()
+
+    
 
 
 if __name__ == "__main__":
